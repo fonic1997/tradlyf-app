@@ -1,5 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { Users } from './users';
+import { Route, Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-login',
@@ -7,12 +9,24 @@ import { Component } from '@angular/core';
   styleUrls: ['./user-login.component.css']
 })
 export class UserLoginComponent {
-  username = '';
-  password = '';
+  objUser : Users
+  constructor(private http:HttpClient,private route:Router){
+    this.objUser=new Users();
+  }
 
-  constructor(private http:HttpClient) {}
+  onLogin(){
+    const header=new HttpHeaders({
+      'Content-Type':'application/json'
+    });
+    this.http.post<any>('http://localhost:8080/login',this.objUser,{headers:header}).subscribe((res:any)=>{
+      if(res.result){
+        this.route.navigate(['/profile']);
 
-  onLogin() {
-   
+      }
+      else{
+        alert("invalid email/password");
+      }
+    });
   }
 }
+
